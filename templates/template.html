@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        {% block head %}
+        <meta charset="UTF-8">
+        <title>{% block title %}{% endblock %} | NoHitSherlock</title>
+        <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+        <script type="text/javascript" src="{{ url_for('static', filename='main.js') }}"></script>
+        {% endblock %}
+    </head>
+    <body>
+        <div id="wrapper">
+            <div id="header">
+                <svg id="logo" class="noselect" viewBox="0 0 260 50">
+                    <symbol id="logo-text">
+{#                        <text text-anchor="left" x="0%" y="75%">NoHitSherlock</text>#}
+                        <text text-anchor="left" x="0%" y="75%" class="typer" id="main" data-words="NoHitSherlock,Daily Dani,Alex <3, Lorem Ipsum" data-delay="100" data-deleteDelay="1000"></text>
+                    </symbol>
+
+                    <g>
+                        <use xlink:href="#logo-text" class="text-copy"></use>
+                        <use xlink:href="#logo-text" class="text-copy"></use>
+                        <use xlink:href="#logo-text" class="text-copy"></use>
+                        <use xlink:href="#logo-text" class="text-copy"></use>
+                        <use xlink:href="#logo-text" class="text-copy"></use>
+                    </g>
+                </svg>
+                <div id="new-question" class="add">
+                    <form action="/add-question" method="post" enctype="multipart/form-data">
+                        <input type="hidden" id="form-type" name="form-type" value="add">
+                        <input type="hidden" id="edit-id" name="edit-id" value="-1">
+                        <input id="question-title" name="question-title" type="text" placeholder="Type your Daily Dani here.." autocomplete="off" required/>
+                        <div class="slider">
+                            <textarea id="question-message" name="question-message" placeholder="Please provide additional info.." required></textarea>
+                            <select name="question-tag" required>
+                                <option value="1">Python</option>
+                                <option value="2">CSS</option>
+                                <option value="3">SQL</option>
+                            </select>
+                            <input type="file" id="question-image" name="question-image">
+                            <button type="submit">Submit</button>
+                            <button type="button" id="cancel-edit" onclick="cancelEdit();" class="hidden">Cancel</button>
+                        </div>
+                    </form>
+                </div>
+                <form action="/">
+                    <div id="sort" class="select">
+                        <div>
+                            <select name="input_sort_type" id="input_sort_type">
+                                <option>--Select--</option>
+                                <option value="title">Question Name</option>
+                                <option value="vote_number">Vote Number</option>
+                                <option value="view_number">View Number</option>
+                                <option value="submission_time">Time</option>
+                            </select>
+                            <div class="select_arrow">
+                            </div>
+                        </div>
+                        <div>
+                            <select name="input_sort" id="input_sort">
+                                 <option>--Select--</option>
+                                 <option value="asc">Ascend</option>
+                                 <option value="desc">Descend</option>
+                            </select>
+                            <div class="select_arrow2">
+                            </div>
+                        </div>
+                        <div><button type="submit" class="myButton"><i class="fa fa-search fa-2x"></i></button></div>
+                    </div>
+                </form>
+                {% block menuitems %}{% endblock %}
+            </div>
+            <div id="content">
+                {% block content %}{% endblock %}
+            </div>
+        </div>
+        <script type="text/javascript" src="{{ url_for('static', filename='vanilla-tilt.js') }}"></script>
+        <script async src="https://unpkg.com/typer-dot-js@0.1.0/typer.js"></script>
+    </body>
+</html>

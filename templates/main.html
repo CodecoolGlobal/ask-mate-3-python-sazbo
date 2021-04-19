@@ -1,0 +1,27 @@
+{% extends "template.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<div id="question-list">
+    {% for question in questions %}
+    <div class="question" data-tilt data-tilt-max="3" data-tilt-reset="false" data-tilt-reverse="true">
+        <label class="vote-count noselect">
+            <label>{{ question['vote_number'] }}</label>
+        </label>
+        <a class="title" href="/question/{{ question['question_id'] }}">{{ question['title'] }}<small>{{ question['submission_time'] }}<br> tag: {{ question['name'] }}</small></a>
+        <div class="image-container {# {{ data[question].image_class }} #}" style="background-image:url('../static/images/{{ question['image'] }}')" title="{{ question['image'] }}">
+            <div>
+                <img src="../static/images/{{ question['image'] }}"/>
+            </div>
+        </div>
+        <div class="message">{# {{ data[question].message|safe }} #}</div>
+        <div class="answers {# {{ data[question].answers_class }} #}">
+            {% for answer in answers %}
+                {% if answer['question_id'] == question['question_id'] %}
+                    <div class="answer"><small>{{ answer['submission_datetime'] }}</small>{{ answer['message'] }}</div><br>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

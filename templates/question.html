@@ -1,0 +1,61 @@
+{% extends "template.html" %}
+{% block title %}{# {{ question.title }} #}{% endblock %}
+{% block content %}
+<script type="text/javascript">
+    {#var question_data = {#}
+    {#  id: {{ question.id }},#}
+    {#  title: '{{ question.title }}'#}
+    {#;#}
+</script>
+{% for question in questions %}
+<div id="question-list">
+    <div class="question">
+
+        <label class="vote-count noselect">
+            <a class="vote-up" href="/vote-question/{{ question['id'] }}?vote=1"><i class="fa fa-arrow-up" aria-hidden="true"></i></a>
+            <label>{{ question['vote_number'] }}</label>
+            <a class="vote-down" href="/vote-question/{{ question['id'] }}?vote=-1"><i class="fa fa-arrow-down" aria-hidden="true"></i></a>
+        </label>
+        <label class="title" >{{ question['title'] }}<a class="edit button" href="#" onclick="editQuestion();"><i class="fa fa-pencil" aria-hidden="true"></i></a><a class="delete button" href="/question/{{ question['id'] }}/delete"><i class="fa fa-trash" aria-hidden="true"></i></a><small>{{ question['submission_datetime'] }}</small></label>
+        <div class="image-container {# {{ question.image_class }} #}" style="background-image:url('../static/images/{{ question['image'] }}')">
+            <div>
+                <img src="../static/images/{{ question['image'] }}"/>
+            </div>
+        </div>
+        <div id="q-message" class="message">{{ question['message'] }}</div>
+
+    </div>
+    <div class="question replies">
+        <div class="answers {# {{ question.answers_class }} #}">
+            {% for answer in answers %}
+            <div class="answer">
+                <div class="answer-buttons">
+                    <a class="edit button" href="#" onclick="editAnswer({{ answer.id }});"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                    <a class="delete button" href="/answer/{{ answer.id }}/delete"><i class="fa fa-trash" aria-hidden="true"></i></a>
+                </div>
+                <label class="vote-count noselect">
+                    <a class="vote-up" href="/vote-answer/{{ answer.id }}?vote=1"><i class="fa fa-arrow-up" aria-hidden="true"></i></a>
+                    <label>{{ answer.vote_number }}</label>
+                    <a class="vote-down" href="/vote-answer/{{ answer.id }}?vote=-1"><i class="fa fa-arrow-down" aria-hidden="true"></i></a>
+                </label>
+                <small>{{ answer.submission_datetime }}</small><span id="answer-message-{{ answer.id }}">{{ answer.message|safe }}</span>
+            </div><br>
+            {% endfor %}
+        </div>
+        <div class="reply-form">
+            <form action="/question/{{ question['id'] }}/new-answer" method="POST">
+                <input type="hidden" name="form-type" id="answer-form-type" value="add">
+                <input type="hidden" name="edit-id" id="answer-edit-id" value="-1">
+                <textarea name="answer-message" id="answer-message" required placeholder="Type your answer here.."></textarea>
+                <div class="buttons">
+                    <button type="submit">Submit</button>
+                    <button type="button" id="cancel-answer-edit" onclick="cancelAnswerEdit();" class="hidden">Cancel</button>
+                </div>
+            </form>
+
+
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}
