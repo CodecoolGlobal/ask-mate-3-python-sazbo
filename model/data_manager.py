@@ -27,6 +27,17 @@ def list_question_with_tag(cursor: RealDictCursor) -> list:
 
 
 @database_common.connection_handler
+def list_question_with_tag_xd(cursor: RealDictCursor, tag_name) -> list:
+    query = f"SELECT question_id, tag_id, title, tag.name, view_number, vote_number, message, image, submission_time " \
+            f"FROM question_tag " \
+            f"LEFT JOIN question q on q.id = question_tag.question_id " \
+            f"LEFT JOIN tag on question_tag.tag_id = tag.id " \
+            f"WHERE tag.name = '{tag_name}';"
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
 def add_question(cursor: RealDictCursor, title, message, image) -> list:
     query = f"INSERT INTO question(submission_time, view_number, vote_number, title, message, image) " \
             f"VALUES (CURRENT_TIMESTAMP, 0, 0, '{title}', '{message}', '{image}') RETURNING id;"

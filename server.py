@@ -24,6 +24,16 @@ def main_page():
     return render_template("/main.html", questions=questions, answers=answers)
 
 
+# TAG SITE
+
+@app.route("/tag/<tag_name>")
+def tag_site(tag_name):
+    questions = data_manager.list_question_with_tag_xd(tag_name)
+    answers = data_manager.list_table('answer')
+
+    return render_template("/tag.html", questions=questions, answers=answers)
+
+
 # QUESTIONS
 
 
