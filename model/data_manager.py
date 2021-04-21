@@ -158,3 +158,35 @@ def sort(cursor: RealDictCursor, sort_type: str, sort_row: str) -> list:
             f"ORDER BY {sort_row} {sort_type};"
     cursor.execute(query)
     return cursor.fetchall()
+
+
+# USER DATAS
+
+
+@database_common.connection_handler
+def add_user(cursor: RealDictCursor, name, password: str):
+    query = f"INSERT INTO user_data (user_name, user_password) " \
+            f"VALUES ('{name}', '{password}');"
+    cursor.execute(query)
+
+
+@database_common.connection_handler
+def list_user(cursor: RealDictCursor) -> list:
+    query = f"SELECT user_name FROM user_data;"
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def list_passwords(cursor: RealDictCursor) -> list:
+    query = f"SELECT user_password FROM user_data;"
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def get_user_pw(cursor: RealDictCursor, name: str) -> list:
+    query = f"SELECT user_password FROM user_data WHERE user_name LIKE '{name}';"
+    cursor.execute(query)
+    return cursor.fetchall()
+

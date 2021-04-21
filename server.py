@@ -1,14 +1,16 @@
 import os
-from flask import Flask, render_template, redirect, request, url_for
+from flask import Flask, render_template, redirect, request, url_for, session, escape
 from werkzeug.utils import secure_filename
 import model.data_manager as data_manager
 import util
+import model.password_check as password_check
 
 UPLOAD_FOLDER = 'static/images'
 ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 
 
 @app.route("/")
@@ -147,6 +149,69 @@ def answer_vote(answer_id):
         data_manager.votes('answer', answer_id, vote)
 
         return redirect("/question/" + str(q_id))
+
+
+# USER LOG/CREATE
+
+
+@app.route('/')
+def index():
+    if 'username' in session:
+        text = 'Logged in as %s' % escape(session['username'])
+        return render_template("index.html", text=text)
+    text = 'You are not logged in, please Login!'
+    return render_template('login.html', text=text)
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        session['username'] = request.form['username']
+        current_password = request.form['password']
+        user_data = data_manager.list_user()
+        users = []
+        n = 0
+        for i in user_data:
+            user_dat = user_data[n]
+            users.append(user_dat['user_name'])
+            n += 1
+        user_password = data_manager.get_user_pw(session['username'])
+        user_pw = user_password[0]
+        check = password_check.verify_password(current_password, user_pw['user_password'])
+        if session['username'] in users:
+            if check:
+                return redirect(url_for('index'))
+
+            else:
+                return render_template('login.html')
+
+
+@app.route('/create-user', methods=['GET', 'POST'])
+def create_user():
+    if request.method == 'POST':
+        session['username'] = request.form['username']
+        user_name = request.form['username']
+        user_password = request.form['password']
+        hashed_password = password_check.hash_password(user_password)
+        user_data = data_manager.list_user()
+        users = []
+        n = 0
+        for i in user_data:
+            user_dat = user_data[n]
+            users.append(user_dat['user_name'])
+            n += 1
+        if user_name not in users:
+            data_manager.add_user(user_name, hashed_password)
+            return render_template('login.html', text="Successful user creation!")
+        else:
+            return render_template('login.html', text="This user created before pls try again!")
+
+
+@app.route('/logout')
+def logout():
+    # remove the username from the session if it's there
+    session.pop('username', None)
+    return redirect(url_for('index'))
 
 
 if __name__ == "__main__":
