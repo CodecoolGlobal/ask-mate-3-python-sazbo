@@ -154,13 +154,23 @@ def answer_vote(answer_id):
 # USER LOG/CREATE
 
 
-@app.route('/')
-def index():
-    if 'username' in session:
-        text = 'Logged in as %s' % escape(session['username'])
-        return render_template("index.html", text=text)
-    text = 'You are not logged in, please Login!'
-    return render_template('login.html', text=text)
+# @app.route('/')
+# def index():
+#     if 'username' in session:
+#         text = 'Logged in as %s' % escape(session['username'])
+#         return render_template("index.html", text=text)
+#     text = 'You are not logged in, please Login!'
+#     return render_template('login.html', text=text)
+
+
+@app.route('/log', methods=['GET', 'POST'])
+def log():
+    return render_template("login.html")
+
+
+@app.route('/create-us', methods=['GET', 'POST'])
+def create_us():
+    return render_template("create-user.html")
 
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -168,6 +178,7 @@ def login():
     if request.method == 'POST':
         session['username'] = request.form['username']
         current_password = request.form['password']
+        print(current_password)
         user_data = data_manager.list_user()
         users = []
         n = 0
@@ -180,7 +191,7 @@ def login():
         check = password_check.verify_password(current_password, user_pw['user_password'])
         if session['username'] in users:
             if check:
-                return redirect(url_for('index'))
+                return main_page()
 
             else:
                 return render_template('login.html')
