@@ -3,14 +3,15 @@
 {% block content %}
 
 
-<div id="create-user">
+<div id="login">
     <form action="/create-user" method="post">
                 <label for="create-user">{{ text }}</label>
                 <p><input type=text name=username>
                 <p><input type=text name=password>
                 <p><input type=submit value=Create-user>
     </form>
+    <a href="/login">After the process pls login here!</a>
 </div>
-<a href="/login">After the process pls login here!</a>
+
 
 {% endblock %}

@@ -1,16 +1,16 @@
 {% extends "template.html" %}
-{% block title %}Login{% endblock %}
+{% block title %}User Data{% endblock %}
 {% block content %}
 
 
-<div id="login">
-    <form action="/login" method="post">
-                <label for="login">{{ text }}</label>
-                <p><input type=text name=username>
-                <p><input type=text name=password>
-                <p><input type=submit value=Login>
-    </form>
-</div>
-<a href="/create-user">If don't have account create one!</a>
+{#<div id="login">#}
+{#    <form action="/login" method="post">#}
+{#                <label for="login">{{ text }}</label>#}
+{#                <p><input type=text name=username>#}
+{#                <p><input type=text name=password>#}
+{#                <p><input type=submit value=Login>#}
+{#    </form>#}
+{#</div>#}
+<a href="/logout">logout</a>
 
 {% endblock %}

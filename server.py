@@ -11,10 +11,12 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
+text = "Login"
 
 
 @app.route("/")
 def main_page():
+    global text
     sort = request.args.get('input_sort')
     sort_type = request.args.get('input_sort_type')
     if sort is None or sort_type is None:
@@ -22,7 +24,6 @@ def main_page():
     else:
         questions = data_manager.sort(sort, sort_type)
     answers = data_manager.list_table('answer')
-    text = "Login"
     return render_template("/main.html", questions=questions, answers=answers, text=text)
 
 
@@ -156,16 +157,20 @@ def answer_vote(answer_id):
 
 # @app.route('/')
 # def index():
+#     global text
 #     if 'username' in session:
 #         text = 'Logged in as %s' % escape(session['username'])
 #         return render_template("index.html", text=text)
 #     text = 'You are not logged in, please Login!'
-#     return render_template('login.html', text=text)
+#     return render_template('main.html', text=text)
 
 
 @app.route('/log', methods=['GET', 'POST'])
 def log():
-    return render_template("login.html")
+    if 'username' in session:
+        return render_template('user.html')
+    else:
+        return render_template("login.html")
 
 
 @app.route('/create-us', methods=['GET', 'POST'])
@@ -175,6 +180,7 @@ def create_us():
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
+    global text
     if request.method == 'POST':
         session['username'] = request.form['username']
         current_password = request.form['password']
@@ -191,10 +197,11 @@ def login():
         check = password_check.verify_password(current_password, user_pw['user_password'])
         if session['username'] in users:
             if check:
+                text = session['username']
                 return main_page()
 
             else:
-                return render_template('login.html')
+                return render_template('login.html', text="Try again!")
 
 
 @app.route('/create-user', methods=['GET', 'POST'])
