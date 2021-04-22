@@ -155,19 +155,22 @@ def answer_vote(answer_id):
 # USER LOG/CREATE
 
 
-@app.route('/')
-def index():
-    global text
-    if 'username' in session:
-        text = 'Logged in as %s' % escape(session['username'])
-        return render_template("index.html", text=text)
-    text = 'You are not logged in, please Login!'
-    return render_template('main.html', text=text)
+# @app.route('/')
+# def index():
+#     global text
+#     if 'username' in session:
+#         text = 'Logged in as %s' % escape(session['username'])
+#         return render_template("index.html", text=text)
+#     text = 'You are not logged in, please Login!'
+#     return render_template('main.html', text=text)
 
 
 @app.route('/log', methods=['GET', 'POST'])
 def log():
-    return render_template("login.html")
+    if 'username' in session:
+        return render_template('user.html')
+    else:
+        return render_template("login.html")
 
 
 @app.route('/create-us', methods=['GET', 'POST'])
