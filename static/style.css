@@ -49,6 +49,15 @@ body {
     color: var(--color-bright);
 }
 
+div#login {
+    background: whitesmoke;
+    border-radius: 10px 10px 10px 10px;
+    height: 70%;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
 div#wrapper {
     padding-top: var(--header-height);
     position: absolute;
@@ -610,4 +619,9 @@ div#sort > div {
         border-radius: 12px;
         cursor: pointer;
         background: var(--color-dark-highlight);
+}
+
+li {
+    margin-top: -8px;
+    padding-top: -10px;
 }
