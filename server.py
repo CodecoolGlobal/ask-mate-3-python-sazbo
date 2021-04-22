@@ -22,8 +22,8 @@ def main_page():
     else:
         questions = data_manager.sort(sort, sort_type)
     answers = data_manager.list_table('answer')
-
-    return render_template("/main.html", questions=questions, answers=answers)
+    text = "Login"
+    return render_template("/main.html", questions=questions, answers=answers, text=text)
 
 
 # TAG SITE
