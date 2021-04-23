@@ -38,9 +38,9 @@ def list_question_with_tag_xd(cursor: RealDictCursor, tag_name) -> list:
 
 
 @database_common.connection_handler
-def add_question(cursor: RealDictCursor, title, message, image) -> list:
-    query = f"INSERT INTO question(submission_time, view_number, vote_number, title, message, image) " \
-            f"VALUES (CURRENT_TIMESTAMP, 0, 0, '{title}', '{message}', '{image}') RETURNING id;"
+def add_question(cursor: RealDictCursor, title, message, image, user) -> list:
+    query = f"INSERT INTO question(submission_time, view_number, vote_number, title, message, image, users) " \
+            f"VALUES (CURRENT_TIMESTAMP, 0, 0, '{title}', '{message}', '{image}', '{user}') RETURNING id;"
     cursor.execute(query)
 
     x = cursor.fetchone()
@@ -82,9 +82,9 @@ def list_table(cursor: RealDictCursor, table_name: str) -> list:
 
 
 @database_common.connection_handler
-def add_answer(cursor: RealDictCursor, question_id: int, message, image) -> list:
-    query = f"INSERT INTO answer (submission_time, vote_number, question_id, message, image)" \
-            f"VALUES (CURRENT_TIMESTAMP, 0, {question_id}, '{message}', '{image}');"
+def add_answer(cursor: RealDictCursor, question_id: int, message, image, user) -> list:
+    query = f"INSERT INTO answer (submission_time, vote_number, question_id, message, image, users)" \
+            f"VALUES (CURRENT_TIMESTAMP, 0, {question_id}, '{message}', '{image}', '{user}');"
     cursor.execute(query)
 
 
@@ -103,7 +103,7 @@ def delete_answer(cursor: RealDictCursor, current_id: int) -> list:
 
 @database_common.connection_handler
 def list_answer(cursor: RealDictCursor) -> list:
-    query = "SELECT submission_time, vote_number, message, image FROM answer"
+    query = "SELECT submission_time, vote_number, message, image, users FROM answer"
     cursor.execute(query)
     return cursor.fetchall()
 

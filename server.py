@@ -56,11 +56,13 @@ def view_question(question_id):
 
 @app.route("/add-question", methods=["POST"])
 def add_question():
+    global user_name
     if request.method == "POST":
         title = request.form.get('question-title')
         message = request.form.get('question-message')
         tag_id = request.form.get('question-tag')
         image = ''
+        user = user_name
 
         if 'question-image' in request.files:
             file = request.files['question-image']
@@ -68,7 +70,7 @@ def add_question():
                 image = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], image))
 
-        current_id = data_manager.add_question(title, message, image)
+        current_id = data_manager.add_question(title, message, image, user)
 
         data_manager.add_tag(current_id, tag_id)
 
@@ -110,9 +112,11 @@ def question_vote(question_id):
 
 @app.route("/question/<question_id>/new-answer", methods=["POST"])
 def answer_question(question_id):
+    global user_name
     if request.method == "POST":
         message = request.form.get('answer-message')
         image = ''
+        user = user_name
 
         if 'answer-image' in request.files:
             file = request.files['answer-image']
@@ -120,7 +124,7 @@ def answer_question(question_id):
                 image = secure_filename(file.filename)
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], image))
 
-        data_manager.add_answer(question_id, message, image)
+        data_manager.add_answer(question_id, message, image, user)
         return redirect("/question/" + question_id)
 
 
@@ -207,7 +211,6 @@ def login():
         if session['username'] in users:
             user_password = data_manager.get_user_pw(session['username'])
             user_pw = user_password[0]
-            print(user_pw)
             check = password_check.verify_password(current_password, user_pw['user_password'])
             if check:
                 user_name = session['username']

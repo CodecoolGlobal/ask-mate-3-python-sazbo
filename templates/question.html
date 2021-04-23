@@ -16,7 +16,7 @@
             <label>{{ question['vote_number'] }}</label>
             <a class="vote-down" href="/vote-question/{{ question['id'] }}?vote=-1"><i class="fa fa-arrow-down" aria-hidden="true"></i></a>
         </label>
-        <label class="title" >{{ question['title'] }}<a class="edit button" href="#" onclick="editQuestion();"><i class="fa fa-pencil" aria-hidden="true"></i></a><a class="delete button" href="/question/{{ question['id'] }}/delete"><i class="fa fa-trash" aria-hidden="true"></i></a><small>{{ question['submission_datetime'] }}</small></label>
+        <label class="title" >{{ question['title'] }}<a class="edit button" href="#" onclick="editQuestion();"><i class="fa fa-pencil" aria-hidden="true"></i></a><a class="delete button" href="/question/{{ question['id'] }}/delete"><i class="fa fa-trash" aria-hidden="true"></i></a><small>{{ question['submission_datetime'] }}</small></a><a>{{ question['users'] }}</a></label>
         <div class="image-container {# {{ question.image_class }} #}" style="background-image:url('../static/images/{{ question['image'] }}')">
             <div>
                 <img src="../static/images/{{ question['image'] }}"/>
@@ -31,12 +31,14 @@
             <div class="answer">
                 <div class="answer-buttons">
                     <a class="edit button" href="#" onclick="editAnswer({{ answer.id }});"><i class="fa fa-pencil" aria-hidden="true"></i></a>
+                    <a>{{ answer['users'] }}:</a>
                     <a class="delete button" href="/answer/{{ answer.id }}/delete"><i class="fa fa-trash" aria-hidden="true"></i></a>
                 </div>
                 <label class="vote-count noselect">
                     <a class="vote-up" href="/vote-answer/{{ answer.id }}?vote=1"><i class="fa fa-arrow-up" aria-hidden="true"></i></a>
                     <label>{{ answer.vote_number }}</label>
                     <a class="vote-down" href="/vote-answer/{{ answer.id }}?vote=-1"><i class="fa fa-arrow-down" aria-hidden="true"></i></a>
+
                 </label>
                 <small>{{ answer.submission_datetime }}</small><span id="answer-message-{{ answer.id }}">{{ answer.message|safe }}</span>
             </div><br>
