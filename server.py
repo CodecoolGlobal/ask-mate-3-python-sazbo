@@ -12,11 +12,13 @@ app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
 text = "Login"
+user_name = ''
 
 
 @app.route("/")
 def main_page():
     global text
+    global user_name
     sort = request.args.get('input_sort')
     sort_type = request.args.get('input_sort_type')
     if sort is None or sort_type is None:
@@ -24,6 +26,8 @@ def main_page():
     else:
         questions = data_manager.sort(sort, sort_type)
     answers = data_manager.list_table('answer')
+    if user_name in session:
+        text = user_name
     return render_template("/main.html", questions=questions, answers=answers, text=text)
 
 
@@ -31,10 +35,11 @@ def main_page():
 
 @app.route("/tag/<tag_name>")
 def tag_site(tag_name):
+    global text
     questions = data_manager.list_question_with_tag_xd(tag_name)
     answers = data_manager.list_table('answer')
 
-    return render_template("/tag.html", questions=questions, answers=answers)
+    return render_template("/tag.html", questions=questions, answers=answers, text=text)
 
 
 # QUESTIONS
@@ -42,10 +47,11 @@ def tag_site(tag_name):
 
 @app.route("/question/<question_id>")
 def view_question(question_id):
+    global text
     question_data = data_manager.get_data_by_id(question_id, 'question')
     question_answers = data_manager.get_data_by_id(question_id, 'answer')
 
-    return render_template("question.html", questions=question_data, answers=question_answers)
+    return render_template("question.html", questions=question_data, answers=question_answers, text=text)
 
 
 @app.route("/add-question", methods=["POST"])
@@ -145,12 +151,14 @@ def delete_answer(answer_id):
 @app.route("/vote-answer/<answer_id>", methods=["GET"])
 def answer_vote(answer_id):
     if request.method == "GET":
-        q_id = data_manager.get_question_id_by_answer_id(answer_id)
-        vote = request.args["vote"]
-        data_manager.votes('answer', answer_id, vote)
+        if 'username' in session:
+            q_id = data_manager.get_question_id_by_answer_id(answer_id)
+            vote = request.args["vote"]
+            data_manager.votes('answer', answer_id, vote)
 
-        return redirect("/question/" + str(q_id))
-
+            return redirect("/question/" + str(q_id))
+        else:
+            return redirect("/question/<question_id>")
 
 # USER LOG/CREATE
 
@@ -167,20 +175,24 @@ def answer_vote(answer_id):
 
 @app.route('/log', methods=['GET', 'POST'])
 def log():
+    global text
+    global user_name
     if 'username' in session:
-        return render_template('user.html')
+        return render_template('user.html', text=user_name)
     else:
-        return render_template("login.html")
+        return render_template("login.html", text=text)
 
 
 @app.route('/create-us', methods=['GET', 'POST'])
 def create_us():
-    return render_template("create-user.html")
+    global text
+    return render_template("create-user.html", text=text)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     global text
+    global user_name
     if request.method == 'POST':
         session['username'] = request.form['username']
         current_password = request.form['password']
@@ -192,16 +204,20 @@ def login():
             user_dat = user_data[n]
             users.append(user_dat['user_name'])
             n += 1
-        user_password = data_manager.get_user_pw(session['username'])
-        user_pw = user_password[0]
-        check = password_check.verify_password(current_password, user_pw['user_password'])
         if session['username'] in users:
+            user_password = data_manager.get_user_pw(session['username'])
+            user_pw = user_password[0]
+            print(user_pw)
+            check = password_check.verify_password(current_password, user_pw['user_password'])
             if check:
-                text = session['username']
+                user_name = session['username']
+                text = user_name
                 return main_page()
-
             else:
                 return render_template('login.html', text="Try again!")
+
+        else:
+            return render_template('login.html', text="Try again!")
 
 
 @app.route('/create-user', methods=['GET', 'POST'])
@@ -222,14 +238,15 @@ def create_user():
             data_manager.add_user(user_name, hashed_password)
             return render_template('login.html', text="Successful user creation!")
         else:
-            return render_template('login.html', text="This user created before pls try again!")
+            return render_template('login.html', text="This username incorrect pls try again!")
 
 
 @app.route('/logout')
 def logout():
-    # remove the username from the session if it's there
+    global text
     session.pop('username', None)
-    return redirect(url_for('index'))
+    text = "Login"
+    return redirect(url_for("main_page"))
 
 
 if __name__ == "__main__":

@@ -27,6 +27,9 @@
                         <use xlink:href="#logo-text" class="text-copy"></use>
                     </g>
                 </svg>
+                <div id="login">
+                    <a href="{{ url_for('log') }}">{{ text }}</a>
+                </div>
                 <div id="new-question" class="add">
                     <form action="/add-question" method="post" enctype="multipart/form-data">
                         <input type="hidden" id="form-type" name="form-type" value="add">
@@ -45,9 +48,7 @@
                         </div>
                     </form>
                 </div>
-                <div id="login">
-                    <a href="{{ url_for('log') }}">{{ text }}</a>
-                </div>
+
                 <form action="/">
                     <div id="sort" class="select">
                         <div>
