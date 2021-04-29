@@ -178,7 +178,11 @@ def answer_vote(answer_id):
 def log():
     global user_name
     if 'username' in session:
-        return render_template('user.html', text=user_name)
+        user = user_name
+        questions = data_manager.list_question_with_user(user)
+        answers = data_manager.list_table('answer')
+        # answers = data_manager.list_answer_with_user(user)
+        return render_template('user.html', text=user_name, questions=questions, answers=answers)
     else:
         return render_template("login.html", text="kiscica")
 

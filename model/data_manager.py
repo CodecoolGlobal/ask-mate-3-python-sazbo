@@ -190,3 +190,20 @@ def get_user_pw(cursor: RealDictCursor, name: str) -> list:
     cursor.execute(query)
     return cursor.fetchall()
 
+
+@database_common.connection_handler
+def list_question_with_user(cursor: RealDictCursor, user) -> list:
+    query = f"SELECT * " \
+            f"FROM question " \
+            f"WHERE users like '{user}';"
+    cursor.execute(query)
+    return cursor.fetchall()
+
+
+@database_common.connection_handler
+def list_answer_with_user(cursor: RealDictCursor, user) -> list:
+    query = f"SELECT * " \
+            f"FROM answer " \
+            f"WHERE users like '{user}';"
+    cursor.execute(query)
+    return cursor.fetchall()
