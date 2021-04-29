@@ -11,14 +11,12 @@ ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'
-text = "Login"
 user_name = ''
 
 
 @app.route("/")
-def main_page():
-    global text
-    global user_name
+@app.route("/<username>")
+def main_page(username=""):
     sort = request.args.get('input_sort')
     sort_type = request.args.get('input_sort_type')
     if sort is None or sort_type is None:
@@ -26,8 +24,9 @@ def main_page():
     else:
         questions = data_manager.sort(sort, sort_type)
     answers = data_manager.list_table('answer')
-    if user_name in session:
-        text = user_name
+    text = "KEKW"
+    if username in session:
+        text = username
     return render_template("/main.html", questions=questions, answers=answers, text=text)
 
 
@@ -35,11 +34,10 @@ def main_page():
 
 @app.route("/tag/<tag_name>")
 def tag_site(tag_name):
-    global text
     questions = data_manager.list_question_with_tag_xd(tag_name)
     answers = data_manager.list_table('answer')
 
-    return render_template("/tag.html", questions=questions, answers=answers, text=text)
+    return render_template("/tag.html", questions=questions, answers=answers, text="kiscica")
 
 
 # QUESTIONS
@@ -47,11 +45,10 @@ def tag_site(tag_name):
 
 @app.route("/question/<question_id>")
 def view_question(question_id):
-    global text
     question_data = data_manager.get_data_by_id(question_id, 'question')
     question_answers = data_manager.get_data_by_id(question_id, 'answer')
 
-    return render_template("question.html", questions=question_data, answers=question_answers, text=text)
+    return render_template("question.html", questions=question_data, answers=question_answers, text="kiscica")
 
 
 @app.route("/add-question", methods=["POST"])
@@ -172,31 +169,28 @@ def answer_vote(answer_id):
 #     global text
 #     if 'username' in session:
 #         text = 'Logged in as %s' % escape(session['username'])
-#         return render_template("index.html", text=text)
+#         return render_template("index.html", text="kiscica")
 #     text = 'You are not logged in, please Login!'
-#     return render_template('main.html', text=text)
+#     return render_template('main.html', text="kiscica")
 
 
 @app.route('/log', methods=['GET', 'POST'])
 def log():
-    global text
     global user_name
     if 'username' in session:
         return render_template('user.html', text=user_name)
     else:
-        return render_template("login.html", text=text)
+        return render_template("login.html", text="kiscica")
 
 
 @app.route('/create-us', methods=['GET', 'POST'])
 def create_us():
-    global text
-    return render_template("create-user.html", text=text)
+    return render_template("create-user.html", text="kiscica")
 
 
-@app.route('/login', methods=['GET', 'POST'])
+@app.route('/login', methods=['POST'])
 def login():
-    global text
-    global user_name
+    user_name = ""
     if request.method == 'POST':
         session['username'] = request.form['username']
         current_password = request.form['password']
@@ -213,9 +207,7 @@ def login():
             user_pw = user_password[0]
             check = password_check.verify_password(current_password, user_pw['user_password'])
             if check:
-                user_name = session['username']
-                text = user_name
-                return main_page()
+                return redirect("/"+session['username'])
             else:
                 return render_template('login.html', text="Try again!")
 
@@ -246,7 +238,6 @@ def create_user():
 
 @app.route('/logout')
 def logout():
-    global text
     session.pop('username', None)
     text = "Login"
     return redirect(url_for("main_page"))
